@@ -83,11 +83,14 @@ JSON
       end
     end
 
-    def create blocking = true
+    def create options = {}
       if exists?
         Stacker.logger.warn 'Stack already exists'
         return
       end
+
+      blocking = options.fetch(:blocking, true)
+      disable_rollback = options.fetch(:disable_rollback, false)
 
       if parameters.missing.any?
         raise MissingParameters.new(
@@ -102,7 +105,7 @@ JSON
         template.local,
         parameters: parameters.resolved,
         capabilities: capabilities.local,
-        disable_rollback: true
+        disable_rollback: disable_rollback
       )
 
       sleep 90

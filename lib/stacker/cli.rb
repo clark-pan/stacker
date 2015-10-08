@@ -22,6 +22,9 @@ module Stacker
     method_option :force, type: :boolean, default: false,
       banner: 'do not ask for permission'
 
+    method_option :disable_rollback, type: :boolean, default: false,
+      banner: 'disable rollback for stack creation'
+
     def initialize(*args); super(*args) end
 
     desc "init [PATH]", "Create stacker project directories"
@@ -77,7 +80,7 @@ module Stacker
           Stacker.logger.info formatted_time stack_name, 'updated', time
         else
           time = Benchmark.realtime do
-            stack.create
+            stack.create disable_rollback: options['disable_rollback']
           end
           Stacker.logger.info formatted_time stack_name, 'created', time
         end
